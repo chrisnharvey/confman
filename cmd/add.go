@@ -27,7 +27,7 @@ func (l *AddCmd) Register(rootCmd *cobra.Command) {
 func (l *AddCmd) GetCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "add",
-		Short: "Add a configuration file to the manager [source] [destination]",
+		Short: "Add a configuration file to the Confman repository [source] [destination]",
 		  // This should move the config file to the destination and add the mapping in the yaml 
 		  // file. A symlink should be created in the source location pointing to the destination.
 		RunE: l.RunAddCmd,

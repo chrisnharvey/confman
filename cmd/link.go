@@ -25,7 +25,7 @@ func (l *LinkCmd) Register(rootCmd *cobra.Command) {
 func (l *LinkCmd) GetCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "link",
-		Short: "Link all configuration files managed by the manager",
+		Short: "Creates symlinks for all configuration files managed by Confman",
 		RunE: l.RunLinkCmd,
 		// This should list all the files in the yaml file.
 	}

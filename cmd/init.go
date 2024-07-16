@@ -1,22 +1,32 @@
 package cmd
 
 import (
+	"github.com/chrisnharvey/confman/internal/config"
 	"github.com/spf13/cobra"
 )
 
-var InitCmd = &cobra.Command{
-	Use:   "init",
-	Short: "Initialize the config ",
-	RunE: RunInitCmd,
-	// This should list all the files in the yaml file.
+type InitCmd struct {
+	Config *config.Config
 }
 
-func RunInitCmd(cmd *cobra.Command, args []string) error {
-	// Who is the current user?
-	// Get the config file from the user's home directory?
+func NewInitCmd(config *config.Config) *InitCmd {
+	return &InitCmd{
+		Config: config,
+	}
+}
 
-	// Read the yaml file
+func (l *InitCmd) Register(rootCmd *cobra.Command) {
+	rootCmd.AddCommand(l.GetCmd())
+}
 
+func (l *InitCmd) GetCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "init",
+		Short: "Initialize the Confman repository in the given location",
+		RunE: l.RunInitCmd,
+	}
+}
 
+func (l *InitCmd) RunInitCmd(cmd *cobra.Command, args []string) error {
 	return nil
 }

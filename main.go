@@ -60,9 +60,8 @@ func main() {
 		panic(err)
 	}
 
-	rootCmd.AddCommand(cmd.InitCmd)
 	// rootCmd.AddCommand(cmd.AddCmd)
-	rootCmd.AddCommand(cmd.DetachCmd)
+	registerCmd(rootCmd, cmd.NewDetachCmd(cfg))
 	registerCmd(rootCmd, cmd.NewListCmd(cfg))
 	registerCmd(rootCmd, cmd.NewAddCmd(cfg))
 	registerCmd(rootCmd, cmd.NewLinkCmd(cfg))
