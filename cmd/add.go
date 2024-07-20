@@ -60,6 +60,12 @@ func (l *AddCmd) RunAddCmd(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("file already exists at %s", destPath)
 	}
 
+	destDir := filepath.Dir(destPath)
+	err = os.MkdirAll(destDir, os.ModePerm)
+	if err != nil {
+		return err
+	}
+
 	destFile, err := os.Create(destPath)
 	if err != nil {
 		return err
