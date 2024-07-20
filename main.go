@@ -14,8 +14,8 @@ type Settings struct {
 }
 
 var rootCmd = &cobra.Command{
-  // Use:   "confman",
-  Short: "Simple configuration manager",
+	// Use:   "confman",
+	Short: "Simple configuration manager",
 }
 
 type registerableCmd interface {
@@ -61,7 +61,7 @@ func main() {
 	}
 
 	// rootCmd.AddCommand(cmd.AddCmd)
-	registerCmd(rootCmd, cmd.NewDetachCmd(cfg))
+	registerCmd(rootCmd, cmd.NewRestoreCmd(cfg))
 	registerCmd(rootCmd, cmd.NewListCmd(cfg))
 	registerCmd(rootCmd, cmd.NewAddCmd(cfg))
 	registerCmd(rootCmd, cmd.NewLinkCmd(cfg))
@@ -69,9 +69,9 @@ func main() {
 	// rootCmd.AddCommand(cdCmd)
 
 	if err := rootCmd.Execute(); err != nil {
-    fmt.Println(err)
-    os.Exit(1)
-  }
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }
 
 func registerCmd(rootCmd *cobra.Command, cmd registerableCmd) {

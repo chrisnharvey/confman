@@ -195,3 +195,50 @@ func (l *Link) Create() error {
 	return nil
 }
 
+func (l *Link) Restore() error {
+	if !l.IsLinked() {
+		return errors.New("link does not exist")
+	}
+
+	if !l.DestinationExists() {
+		return errors.New("destination does not exist")
+	}
+
+	if !l.SourceExists() {
+		return errors.New("source does not exist")
+	}
+
+	// remove symlink
+	err := os.Remove(l.Source)
+	if err != nil {
+		return err
+	}
+
+	// create file for restore
+	destFile, err := os.Create(l.Source)
+	if err != nil {
+		return err
+	}
+	defer destFile.Close()
+
+	// open file to copy
+	file, err := os.Open(l.GetFullPath())
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	// copy file back to its original location
+	_, err = io.Copy(destFile, file)
+	if err != nil {
+		return fmt.Errorf("could not copy file: %v", err)
+	}
+
+	// remove source file
+	err = os.Remove(l.GetFullPath())
+	if err != nil {
+		return fmt.Errorf("could not remove source file: %v", err)
+	}
+
+	return nil
+}

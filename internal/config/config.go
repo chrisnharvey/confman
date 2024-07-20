@@ -9,7 +9,7 @@ import (
 
 const (
 	SYSTEM_CONFIG_PATH string = "/etc/confman.conf"
-	HOME_CONFIG_PATH string = ".config/confman.conf"
+	HOME_CONFIG_PATH   string = ".config/confman.conf"
 )
 
 type Config struct {
@@ -18,6 +18,12 @@ type Config struct {
 
 func (c *Config) AddPath(source, name string) error {
 	c.Paths[source] = name
+
+	return c.Save()
+}
+
+func (c *Config) RemovePath(source string) error {
+	delete(c.Paths, source)
 
 	return c.Save()
 }
