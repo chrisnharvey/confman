@@ -137,6 +137,14 @@ func (l *Link) Link() error {
 	return os.Symlink(l.GetFullPath(), l.Source)
 }
 
+func (l *Link) Unlink() error {
+	if !l.IsLinked() {
+		return errors.New("link does not exist")
+	}
+
+	return os.Remove(l.Source)
+}
+
 func (l *Link) Create() error {
 	if l.DestinationExists() {
 		return errors.New("destination already exists")
