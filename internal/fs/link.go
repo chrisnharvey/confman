@@ -3,17 +3,20 @@ package fs
 import (
 	"crypto/sha256"
 	"errors"
+	"fmt"
+	"io"
 	"os"
+	"path/filepath"
 )
 
 type Link struct {
-	Source string
+	Source      string
 	Destination string
 }
 
 func NewLink(source, destination string) *Link {
 	return &Link{
-		Source: source,
+		Source:      source,
 		Destination: destination,
 	}
 }
@@ -133,3 +136,54 @@ func (l *Link) Link() error {
 
 	return os.Symlink(l.GetFullPath(), l.Source)
 }
+
+func (l *Link) Create() error {
+	if l.DestinationExists() {
+		return errors.New("destination already exists")
+	}
+
+	if !l.SourceExists() {
+		return errors.New("source does not exist")
+	}
+
+	// open file
+	file, err := os.Open(l.Source)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	// create directory if required
+	destDir := filepath.Dir(l.GetFullPath())
+	err = os.MkdirAll(destDir, os.ModePerm)
+	if err != nil {
+		return err
+	}
+
+	// create file
+	destFile, err := os.Create(l.GetFullPath())
+	if err != nil {
+		return err
+	}
+	defer destFile.Close()
+
+	// copy file
+	_, err = io.Copy(destFile, file)
+	if err != nil {
+		return fmt.Errorf("could not copy file: %v", err)
+	}
+
+	// remove source file
+	err = os.Remove(l.Source)
+	if err != nil {
+		os.Remove(l.GetFullPath()) // cleanup
+		return fmt.Errorf("could not remove source file: %v", err)
+	}
+
+	if err := os.Symlink(l.GetFullPath(), l.Source); err != nil {
+		return err
+	}
+
+	return nil
+}
+
