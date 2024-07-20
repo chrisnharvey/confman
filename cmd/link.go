@@ -26,7 +26,7 @@ func (l *LinkCmd) GetCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "link",
 		Short: "Creates symlinks for all configuration files managed by Confman",
-		RunE: l.RunLinkCmd,
+		RunE:  l.RunLinkCmd,
 		// This should list all the files in the yaml file.
 	}
 }
@@ -62,7 +62,7 @@ func (l *LinkCmd) RunLinkCmd(cmd *cobra.Command, args []string) error {
 			continue
 		}
 
-		if err := link.Create(); err != nil {
+		if err := link.Link(); err != nil {
 			fmt.Println(" (error creating link)")
 			continue
 		}

@@ -126,7 +126,7 @@ func (l *Link) IsLinked() bool {
 	return true
 }
 
-func (l *Link) Create() error {
+func (l *Link) Link() error {
 	if !l.CanBeLinked() {
 		return errors.New("link cannot be created")
 	}
