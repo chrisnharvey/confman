@@ -41,4 +41,5 @@ Available Commands:
   add         Add a configuration file to the Confman repository [source] [destination]
   link        Creates symlinks for all configuration files managed by Confman
   list        Lists all configuration files and their status
+  restore     Restore a config file from Confman and move it back to its original location
 ```
