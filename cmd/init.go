@@ -23,7 +23,7 @@ func (l *InitCmd) GetCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "init",
 		Short: "Initialize the Confman repository in the given location",
-		RunE: l.RunInitCmd,
+		RunE:  l.RunInitCmd,
 	}
 }
 

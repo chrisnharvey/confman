@@ -26,7 +26,7 @@ func (l *ListCmd) GetCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "list",
 		Short: "Lists all configuration files and their status",
-		RunE: l.RunListCmd,
+		RunE:  l.RunListCmd,
 	}
 }
 
