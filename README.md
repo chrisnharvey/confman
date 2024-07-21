@@ -43,3 +43,8 @@ Available Commands:
   list        Lists all configuration files and their status
   restore     Restore a config file from Confman and move it back to its original location
 ```
+
+## TODO
+- [ ] Add tests
+- [ ] Backup existing files when linking
+- [ ] Add unlink command to remove symlinks and restores from backups/repository
