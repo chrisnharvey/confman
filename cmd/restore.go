@@ -5,17 +5,19 @@ import (
 	"path/filepath"
 
 	"github.com/chrisnharvey/confman/internal/config"
-	"github.com/chrisnharvey/confman/internal/fs"
+	"github.com/chrisnharvey/confman/internal/fs/link"
 	"github.com/spf13/cobra"
 )
 
 type RestoreCmd struct {
-	Config *config.Config
+	Config      *config.Config
+	LinkFactory LinkFactory
 }
 
-func NewRestoreCmd(config *config.Config) *RestoreCmd {
+func NewRestoreCmd(config *config.Config, linkFactory LinkFactory) *RestoreCmd {
 	return &RestoreCmd{
-		Config: config,
+		Config:      config,
+		LinkFactory: linkFactory,
 	}
 }
 
@@ -45,7 +47,7 @@ func (l *RestoreCmd) RunRestoreCmd(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("file is not managed by confman %s", filePath)
 	}
 
-	link := fs.NewLink(filePath, name)
+	link := link.NewLink(filePath, name)
 
 	err = link.Restore()
 	if err != nil {

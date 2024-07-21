@@ -1,4 +1,4 @@
-package fs
+package link
 
 import (
 	"crypto/sha256"
@@ -9,20 +9,20 @@ import (
 	"path/filepath"
 )
 
-type Link struct {
+type Symlink struct {
 	Source      string
 	Destination string
 }
 
-func NewLink(source, destination string) *Link {
-	return &Link{
+func NewLink(source, destination string) *Symlink {
+	return &Symlink{
 		Source:      source,
 		Destination: destination,
 	}
 }
 
-func NewLinks(links map[string]string) []*Link {
-	var linkSlice []*Link
+func NewLinks(links map[string]string) []*Symlink {
+	var linkSlice []*Symlink
 
 	for source, dest := range links {
 		linkSlice = append(linkSlice, NewLink(source, dest))
@@ -31,11 +31,11 @@ func NewLinks(links map[string]string) []*Link {
 	return linkSlice
 }
 
-func (l *Link) GetFullPath() string {
+func (l *Symlink) GetFullPath() string {
 	return "/confman/" + l.Destination
 }
 
-func (l *Link) CanBeLinked() bool {
+func (l *Symlink) CanBeLinked() bool {
 	if !l.DestinationExists() {
 		return false
 	}
@@ -51,7 +51,7 @@ func (l *Link) CanBeLinked() bool {
 	return true
 }
 
-func (l *Link) SourceContentsIsSame() bool {
+func (l *Symlink) SourceContentsIsSame() bool {
 	if !l.SourceExists() || !l.DestinationExists() {
 		return false
 	}
@@ -69,11 +69,11 @@ func (l *Link) SourceContentsIsSame() bool {
 	return sourceHash == destHash
 }
 
-func (l *Link) GetSourceHash() (string, error) {
+func (l *Symlink) GetSourceHash() (string, error) {
 	return getHashForPath(l.Source)
 }
 
-func (l *Link) GetDestinationHash() (string, error) {
+func (l *Symlink) GetDestinationHash() (string, error) {
 	return getHashForPath(l.GetFullPath())
 }
 
@@ -88,7 +88,7 @@ func getHashForPath(path string) (string, error) {
 	return string(hasher.Sum(nil)), nil
 }
 
-func (l *Link) DestinationExists() bool {
+func (l *Symlink) DestinationExists() bool {
 	if _, err := os.Stat(l.GetFullPath()); err != nil {
 		return false
 	}
@@ -96,7 +96,7 @@ func (l *Link) DestinationExists() bool {
 	return true
 }
 
-func (l *Link) SourceExists() bool {
+func (l *Symlink) SourceExists() bool {
 	if _, err := os.Stat(l.Source); err != nil {
 		return false
 	}
@@ -104,7 +104,7 @@ func (l *Link) SourceExists() bool {
 	return true
 }
 
-func (l *Link) IsSourceSymlink() bool {
+func (l *Symlink) IsSourceSymlink() bool {
 	if _, err := os.Readlink(l.Source); err != nil {
 		return false
 	}
@@ -112,11 +112,11 @@ func (l *Link) IsSourceSymlink() bool {
 	return true
 }
 
-func (l *Link) GetSymlinkTarget() (string, error) {
+func (l *Symlink) GetSymlinkTarget() (string, error) {
 	return os.Readlink(l.Source)
 }
 
-func (l *Link) IsLinked() bool {
+func (l *Symlink) IsLinked() bool {
 	target, err := l.GetSymlinkTarget()
 	if err != nil {
 		return false
@@ -129,7 +129,7 @@ func (l *Link) IsLinked() bool {
 	return true
 }
 
-func (l *Link) Link() error {
+func (l *Symlink) Link() error {
 	if !l.CanBeLinked() {
 		return errors.New("link cannot be created")
 	}
@@ -137,7 +137,7 @@ func (l *Link) Link() error {
 	return os.Symlink(l.GetFullPath(), l.Source)
 }
 
-func (l *Link) Unlink() error {
+func (l *Symlink) Unlink() error {
 	if !l.IsLinked() {
 		return errors.New("link does not exist")
 	}
@@ -145,7 +145,7 @@ func (l *Link) Unlink() error {
 	return os.Remove(l.Source)
 }
 
-func (l *Link) Create() error {
+func (l *Symlink) Create() error {
 	if l.DestinationExists() {
 		return errors.New("destination already exists")
 	}
@@ -195,7 +195,7 @@ func (l *Link) Create() error {
 	return nil
 }
 
-func (l *Link) Restore() error {
+func (l *Symlink) Restore() error {
 	if !l.IsLinked() {
 		return errors.New("link does not exist")
 	}

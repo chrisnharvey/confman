@@ -4,17 +4,19 @@ import (
 	"fmt"
 
 	"github.com/chrisnharvey/confman/internal/config"
-	"github.com/chrisnharvey/confman/internal/fs"
+	"github.com/chrisnharvey/confman/internal/fs/link"
 	"github.com/spf13/cobra"
 )
 
 type LinkCmd struct {
-	Config *config.Config
+	Config      *config.Config
+	LinkFactory LinkFactory
 }
 
-func NewLinkCmd(config *config.Config) *LinkCmd {
+func NewLinkCmd(config *config.Config, linkFactory LinkFactory) *LinkCmd {
 	return &LinkCmd{
-		Config: config,
+		Config:      config,
+		LinkFactory: linkFactory,
 	}
 }
 
@@ -37,7 +39,7 @@ func (l *LinkCmd) RunLinkCmd(cmd *cobra.Command, args []string) error {
 
 	// Read the yaml file
 
-	links := fs.NewLinks(l.Config.Paths)
+	links := link.NewLinks(l.Config.Paths)
 
 	for _, link := range links {
 		fmt.Printf("%s -> %s", link.Destination, link.Source)

@@ -4,17 +4,19 @@ import (
 	"fmt"
 
 	"github.com/chrisnharvey/confman/internal/config"
-	"github.com/chrisnharvey/confman/internal/fs"
+	"github.com/chrisnharvey/confman/internal/fs/link"
 	"github.com/spf13/cobra"
 )
 
 type ListCmd struct {
-	Config *config.Config
+	Config      *config.Config
+	LinkFactory LinkFactory
 }
 
-func NewListCmd(config *config.Config) *ListCmd {
+func NewListCmd(config *config.Config, linkFactory LinkFactory) *ListCmd {
 	return &ListCmd{
-		Config: config,
+		Config:      config,
+		LinkFactory: linkFactory,
 	}
 }
 
@@ -31,7 +33,7 @@ func (l *ListCmd) GetCmd() *cobra.Command {
 }
 
 func (l *ListCmd) RunListCmd(cmd *cobra.Command, args []string) error {
-	links := fs.NewLinks(l.Config.Paths)
+	links := link.NewLinks(l.Config.Paths)
 
 	for _, link := range links {
 		fmt.Printf("%s -> %s", link.Destination, link.Source)

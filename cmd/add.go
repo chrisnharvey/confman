@@ -5,17 +5,24 @@ import (
 	"path/filepath"
 
 	"github.com/chrisnharvey/confman/internal/config"
-	"github.com/chrisnharvey/confman/internal/fs"
+	"github.com/chrisnharvey/confman/internal/fs/link"
 	"github.com/spf13/cobra"
 )
 
 type AddCmd struct {
-	Config *config.Config
+	Config      *config.Config
+	LinkFactory LinkFactory
 }
 
-func NewAddCmd(config *config.Config) *AddCmd {
+//go:generate mockery --name LinkFactory
+type LinkFactory interface {
+	NewLink(source, destination string) link.Link
+}
+
+func NewAddCmd(config *config.Config, linkFactory LinkFactory) *AddCmd {
 	return &AddCmd{
-		Config: config,
+		Config:      config,
+		LinkFactory: linkFactory,
 	}
 }
 
@@ -48,7 +55,7 @@ func (l *AddCmd) RunAddCmd(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("mapping already exists for %s", filePath)
 	}
 
-	link := fs.NewLink(filePath, args[1])
+	link := l.LinkFactory.NewLink(filePath, args[1])
 
 	err = link.Create()
 	if err != nil {

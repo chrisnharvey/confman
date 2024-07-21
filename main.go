@@ -6,6 +6,7 @@ import (
 
 	"github.com/chrisnharvey/confman/cmd"
 	"github.com/chrisnharvey/confman/internal/config"
+	"github.com/chrisnharvey/confman/internal/fs/link"
 	"github.com/spf13/cobra"
 )
 
@@ -60,11 +61,13 @@ func main() {
 		panic(err)
 	}
 
+	linkFactory := link.NewFactory()
+
 	// rootCmd.AddCommand(cmd.AddCmd)
-	registerCmd(rootCmd, cmd.NewRestoreCmd(cfg))
-	registerCmd(rootCmd, cmd.NewListCmd(cfg))
-	registerCmd(rootCmd, cmd.NewAddCmd(cfg))
-	registerCmd(rootCmd, cmd.NewLinkCmd(cfg))
+	registerCmd(rootCmd, cmd.NewRestoreCmd(cfg, linkFactory))
+	registerCmd(rootCmd, cmd.NewListCmd(cfg, linkFactory))
+	registerCmd(rootCmd, cmd.NewAddCmd(cfg, linkFactory))
+	registerCmd(rootCmd, cmd.NewLinkCmd(cfg, linkFactory))
 	// rootCmd.AddCommand(gitCmd)
 	// rootCmd.AddCommand(cdCmd)
 
